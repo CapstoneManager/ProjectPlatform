@@ -1,0 +1,106 @@
+@import "~normalize.css/normalize.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
+@import "~@blueprintjs/core/lib/scss/variables";
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.csci-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  >.bp3-navbar {
+    flex: 0;
+  }
+
+  >.content {
+    flex: 1;
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+#csci-logo {
+  width: 64px;
+  display: block;
+}
+
+#csci-login-form-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $light-gray4;
+  flex-direction: column;
+
+  #csci-login-form {
+    flex: 0 1 auto;
+    max-width: 450px;
+    margin: 20px;
+    width: 100%;
+  }
+}
+
+.csci-form-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $light-gray4;
+  flex-direction: column;
+  padding: 20px;
+
+  .csci-form {
+    flex: 0 1 auto;
+    margin-bottom: 20px;
+    min-width: 450px;
+  }
+
+  .csci-form-actions {
+    flex: 0 1 auto;
+    margin-bottom: 20px;
+  }
+}
+
+#csci-navbar-tabs {
+  margin: 0 auto;
+}
+
+.csci-container {
+  background-color: $light-gray4;
+  min-height: 100%;
+  display: flex;
+  flex-direction: row;
+
+  .csci-side {
+    flex: 0;
+    min-width: 300px;
+  }
+
+  .csci-main {
+    flex: 1;
+  }
+
+  .csci-side,
+  .csci-main {
+    >.bp3-card {
+      margin: 20px;
+    }
+  }
+
+  .csci-side>.bp3-card {
+    margin-right: 1px;
+  }
+}
+
+.project-edit-modal-body {
+  padding: 20px;
+}
