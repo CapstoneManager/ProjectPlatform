@@ -79,7 +79,7 @@ class ProjectRankingContainer extends React.Component<IProjectRankingContainerPr
     async componentDidMount() {
         this.setState({ isLoading: true });
 
-        const response = await fetchServer(`/projects/student/${getUserEmail()}`);
+        const response = await fetchServer(`/projects/student/${getUserEmail()}/rankings`);
         const data = await response.json();
 
         this.setState({
