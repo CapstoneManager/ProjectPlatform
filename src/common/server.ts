@@ -1,6 +1,6 @@
 import * as jwtDecode from 'jwt-decode';
 import { IJwtToken } from './interfaces';
-export const requestEndpointBase = `//${window.location.hostname}:8433`;
+export const requestEndpointBase = `//${window.location.hostname}:8443`;
 
 export function getApiURI(endpoint: string) {
     return requestEndpointBase + endpoint;
