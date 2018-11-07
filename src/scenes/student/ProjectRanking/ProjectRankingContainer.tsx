@@ -9,6 +9,7 @@ import { Button, Intent, NonIdealState, Spinner, Card, Tooltip } from '@blueprin
 import { Loading } from 'components/Loading';
 import { fetchServer } from 'common/server';
 import { MainToast } from 'components/MainToast';
+import autobind from 'autobind-decorator';
 
 const cardTarget = {
     drop() {
@@ -22,8 +23,7 @@ interface IProjectRankingContainerProps {
 
 interface IProjectRankingContainerState {
     isLoading: boolean;
-    projectCards: Array<IProject>;
-    rankingData: Array<number>;
+    rankedProjects: Array<IProject>;
     submitted: boolean;
     email: string;
 }
@@ -44,27 +44,34 @@ interface IProject {
     connectDropTarget: connect.dropTarget(),
 }))
 
+@autobind
 class ProjectRankingContainer extends React.Component<IProjectRankingContainerProps, IProjectRankingContainerState> {
 
-    constructor(props: IProjectRankingContainerProps) {
-        super(props);
-        this.moveCard = this.moveCard.bind(this);
-        this.findCard = this.findCard.bind(this);
-        this.submitClicked = this.submitClicked.bind(this);
-        this.state = {
-            isLoading: false,
-            projectCards: [],
-            rankingData: [],
-            submitted: false,
-            email: ''
-        };
+    public state: IProjectRankingContainerState = {
+        isLoading: false,
+        rankedProjects: [],
+        submitted: false,
+        email: ''
+    };
+
+    async componentDidMount() {
+        this.setState({ isLoading: true });
+
+        const response = await fetchServer(`/projects/student/${getUserEmail()}/rankings`);
+        const data = await response.json();
+
+        this.setState({
+            rankedProjects: data,
+            isLoading: false
+        });
     }
 
     async submitClicked() {
         var submit = confirm('Are you sure you want to submit rankings?');
         if (submit) {
             const email = sessionStorage.getItem('email');
-            const response = await fetchServer(`/projects/${email}/submit-ranking`, 'POST', this.state.rankingData);
+            const rankings: number[] = this.state.rankedProjects.map((project: IProject) => project.projectId);
+            const response = await fetchServer(`/projects/${email}/submit-ranking`, 'POST', rankings);
             if (response.ok) {
                 MainToast.show({
                     message: 'Project rankings have been submitted!',
@@ -76,23 +83,11 @@ class ProjectRankingContainer extends React.Component<IProjectRankingContainerPr
         }
     }
 
-    async componentDidMount() {
-        this.setState({ isLoading: true });
-
-        const response = await fetchServer(`/projects/student/${getUserEmail()}/rankings`);
-        const data = await response.json();
-
-        this.setState({
-            projectCards: data,
-            isLoading: false
-        });
-    }
-
     moveCard(id: number, atIndex: number) {
         const { projectCard, index } = this.findCard(id);
         this.setState(
             update(this.state, {
-                projectCards: {
+                rankedProjects: {
                     $splice: [[index, 1], [atIndex, 0, projectCard]],
                 },
             }),
@@ -100,18 +95,18 @@ class ProjectRankingContainer extends React.Component<IProjectRankingContainerPr
     }
 
     findCard(id: number) {
-        const { projectCards } = this.state;
-        const projectCard = projectCards.filter(c => c.projectId === id)[0];
+        const { rankedProjects } = this.state;
+        const projectCard = rankedProjects.filter(c => c.projectId === id)[0];
 
         return {
             projectCard,
-            index: projectCards.indexOf(projectCard),
+            index: rankedProjects.indexOf(projectCard),
         };
     }
 
     render() {
         const { connectDropTarget } = this.props;
-        const { projectCards, isLoading, submitted } = this.state;
+        const { rankedProjects, isLoading, submitted } = this.state;
 
         if (submitted) {
             return (
@@ -144,7 +139,7 @@ class ProjectRankingContainer extends React.Component<IProjectRankingContainerPr
                             <h1 style={{ margin: 0 }}>Rank Projects</h1>
                         </div>
                         <Card className="csci-form">
-                            {projectCards.map((projectCard: IProject, index: number) => (
+                            {rankedProjects.map((projectCard: IProject, index: number) => (
                                 <Tooltip
                                     wrapperTagName="div"
                                     targetTagName="div"
