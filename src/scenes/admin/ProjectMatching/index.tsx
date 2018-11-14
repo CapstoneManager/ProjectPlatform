@@ -118,11 +118,23 @@ class ProjectMatching extends React.Component<IProjectMatchingProps, IProjectMat
 
   async assignProjects() {
     await this.setState({ isSendingEmails: true });
-    const response = await fetchServer('/projects/assign-to-students', 'POST', this.state.projects);
+    // const response = await fetchServer('/projects/assign-to-students', 'POST', this.state.projects);
+    const response = await fetchServer('/projects/email-assignments', 'POST', { 
+      "year": this.state.editYear, 
+      "semester": this.state.editSemester
+    });
     if (response.ok) {
-      alert('Projects assignments were successfully emailed to students.');
+      MainToast.show({
+        message: 'Projects assignments were successfully emailed to students.',
+        intent: 'success',
+        icon: 'tick',
+      });
     } else {
-      alert('Could not assign projects.');
+      MainToast.show({
+        message: 'Could not email projects.',
+        intent: 'danger',
+        icon: 'error',
+      });
     }
     await this.setState({ isSendingEmails: false });
   }
