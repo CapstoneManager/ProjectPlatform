@@ -82,31 +82,9 @@ class ProjectMatching extends React.Component<IProjectMatchingProps, IProjectMat
     } as any);
   }
 
-  async launch() {
+  async generateMatches() {
     this.setState({ isLaunched: true });
-    try {
-      const response = await fetchServer(`/projects/assignment?semester=${this.state.editSemester}&year=${this.state.editYear}`);
-      const data = await response.json();
-      if (data.length === 0) {
-        MainToast.show({
-          intent: Intent.DANGER,
-          icon: 'tick',
-          message: 'No possible assignments.',
-        });
-        this.setState({
-          isLaunched: false,
-          isLoading: false
-        });
-      } else {
-        this.setState({
-          projects: data
-        });
-      }
-
-    } catch (e) {
-      console.error(e);
-    }
-
+    fetchServer(`/admin/run-algorithm`);
   }
 
   buttonTitle() {
@@ -120,8 +98,8 @@ class ProjectMatching extends React.Component<IProjectMatchingProps, IProjectMat
     await this.setState({ isSendingEmails: true });
     // const response = await fetchServer('/projects/assign-to-students', 'POST', this.state.projects);
     const response = await fetchServer('/projects/email-assignments', 'POST', { 
-      "year": this.state.editYear, 
-      "semester": this.state.editSemester
+      'year': this.state.editYear, 
+      'semester': this.state.editSemester
     });
     if (response.ok) {
       MainToast.show({
@@ -165,7 +143,7 @@ class ProjectMatching extends React.Component<IProjectMatchingProps, IProjectMat
               <Button
                 rightIcon="arrow-right"
                 intent={Intent.PRIMARY}
-                onClick={this.launch}
+                onClick={this.generateMatches}
                 text="Generate Matches"
                 large={true}
               />
