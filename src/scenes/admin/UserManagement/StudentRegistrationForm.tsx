@@ -13,6 +13,8 @@ interface IStudentRegistrationState {
     emailsParsed: string[];
     isLoading: boolean;
     semesterType: SemesterType;
+    currentYear: string;
+    listOfYears: string[];
 }
 enum InviteState {
     Initial,
@@ -34,6 +36,12 @@ enum SemesterType {
 class StudentRegistrationForm extends React.Component<IStudentRegistrationProps, IStudentRegistrationState> {
     constructor(props: IStudentRegistrationProps) {
         super(props);
+        const years: string[] = [];
+        const currYear = (new Date()).getFullYear();
+    
+        for (var j = 0; j < 5; j++) {
+          years.push((currYear - 2 + j).toString());
+        }
         this.state = {
             inviteState: InviteState.Initial,
             userType: UserType.Student,
@@ -41,6 +49,8 @@ class StudentRegistrationForm extends React.Component<IStudentRegistrationProps,
             emailsParsed: [],
             isLoading: false,
             semesterType: SemesterType.FALL,
+            listOfYears: years,
+            currentYear: years[2],
         };
     }
 
@@ -103,6 +113,12 @@ class StudentRegistrationForm extends React.Component<IStudentRegistrationProps,
         });
     }
 
+    handleChange = (id: keyof IStudentRegistrationState) => (e: React.FormEvent<any>) => {
+        this.setState({
+            [id]: e.currentTarget.value,
+        } as any);
+    }
+
     renderForm() {
         return (
             <React.Fragment>
@@ -122,6 +138,14 @@ class StudentRegistrationForm extends React.Component<IStudentRegistrationProps,
                                         <option value={SemesterType.SPRING}>SPRING</option>
                                         <option value={SemesterType.SUMMER}>SUMMER</option>
                                     </HTMLSelect>
+                                </td>
+                                <td>
+                                    <HTMLSelect
+                                        id="editYear"
+                                        value={this.state.currentYear}
+                                        onChange={this.handleChange('currentYear')}
+                                        options={this.state.listOfYears}
+                                    />
                                 </td>
                             </tr>
                         </table>
